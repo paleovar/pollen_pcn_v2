@@ -1,0 +1,16 @@
+*.Rproj.user
+*.Rhistory
+*.RData
+*.Ruserdata
+*.png
+*.pdf
+*.svg
+.Rproj.user
+cache/*
+!cache/.gitkeep
+data_in/*
+!data_in/harmonization
+data_ACER/*
+!data_ACER/.gitkeep
+figures/*
+!figures/.gitkeep

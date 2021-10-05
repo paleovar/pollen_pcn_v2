@@ -1,0 +1,247 @@
+---
+title: "Getting started with `pollen_pcn_v2`"
+author:
+- Moritz Adam - madam@iup.uni-heidelberg.de
+- Nils Weitzel - nweitzel@iup.uni-heidelberg.de
+- Kira Rehfeld - kira.rehfeld@uni-tuebingen.de
+date: '*Last update: October, 04 2021*'
+output:
+  html_notebook:
+    toc: yes
+    toc_depth: 2
+  html_document:
+    toc: yes
+    toc_depth: '2'
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Introduction {#intro}
+
+This document gives an overview of the code stack used to perform the analyses described in the manuscript **"Identifying Global-Scale Patterns of Vegetation Change During the Last Deglaciation from Paleoclimate Networks"** by Moritz Adam, Nils Weitzel, and Kira Rehfeld (2021) which is submitted to *"Paleoceanography and Paleoclimatology"* for peer review.
+
+A snapshot of code and pre-processed data is archived on [Zenodo](https://www.zenodo.org/) with DOI [10.5281/zenodo.5543879](https://doi.org/10.5281/zenodo.5543879). A maintained version of the code *without* pre-processed data caches can be found on [GitHub](https://www.github.com): [github.com/paleovar/pollen_pcn_v2](https://github.com/paleovar/pollen_pcn_v2).
+
+The majority of the code stack is written in [R](https://www.r-project.org/). Note that, at this point, the code is not a classical R package but a collection of scripts. The scripts are, however, all documented in this vignette and top-level scripts all feature detailed comments which guide users in retracing the different steps of our analyses.
+
+The [Prerequisites section](#prereq) describes preparatory steps required to run the code. It further lists a short description of all files, scripts and directories provided in this repository.
+
+The [PCN section](#pcns) provides a guide to the code for the individual figures of the publication. It ends with a note on computational requirements. 
+
+Finally, the [caches section](#caches) describes the pre-processed data which we provide along with this code stack. The caches allow to reproduce all figures without the need to recompute null model ensembles used to quantify the significance of network links or the need to obtain the three individual simulations of the Last Glacial transition.
+
+# Prerequisites {#prereq}
+
+## Description of all files, scripts, and directories in `pollen_pcn_v2` {#file_descriptions}
+
+Script | Description
+---- | ----------
+`get_started[.Rmd,.nb.html,.html]` | This notebook, tutorial on how to use the code
+`constants.R` | global constants like paths, colors, mapping regions, and labels
+`load_libraries.R` | load all needed libraries (see [Install and load package dependencies](#libraries))
+`init_all.R` | sources all function and class definitions and loads package dependencies (see [PCN section](#pcns))
+`PCNdata.R` | holds the `PCNdata` S3 class which is used to handle the data and all methods of the class. The class methods build upon functions from `util_*.R` scripts.
+`util_dating.R` | helpers for handling chronologies
+`util_file_processing.R` | helpers for loading and handling of files and data
+`util_networks.R` | helpers for computing paleoclimate networks and network measures
+`util_nullmodel.R` | helpers for pseudo proxies used as reference for the proxy paleoclimate networks
+`util_plotting.R` | global objects used in the plotting routines
+`util_signal_processing.R` | helpers for signal processing (windowing, Gaussian filter, ...)
+`util_taxa_harmonization.R` | helpers for harmonizing taxa and classifying arboreal pollen
+`plot_maps.R` | larger and/or re-used plotting functions for map plotting
+`plot_networks.R` | larger and/or re-used plotting functions for visualizing networks
+`main_emulation_data.R` | preparation of emulated response data from fitted emulators
+`main_emulation_pcn_meas.R` | computation of network measures of the networks based on emulated model responses
+`main_emulation_pcns.R` | computation of similarity measures to construct networks based on emulated model responses
+`main_explained_variance.R` | explained variance of the ACER AP signal for the multivariate pollen records
+`main_fit_emulators.R` | fitting of emulators (general adversarial models) for TraCE and HadCM3 simulations
+`main_pca.R` | principal component analysis of ACER AP pollen proxies and TraCE surrogates
+`main_pcn_meas.R` | computation of network measures of the networks based on ACER AP signals and model surrogates
+`main_pcn_sensitivity.R` | sensitivity tests of network measures to record properties and transformation
+`main_pcns.R` | computation of similarity measures to construct networks based on ACER AP signals and model surrogates
+`main_simulation_data.R` | initialize the pseudo proxies from model data
+`main_test_pcn.R` | test case for code used to compute null models and networks (see the section on [bit identical reproduction](#bitid))
+`create_fig[...].R` | [R](https://www.r-project.org/) scripts to create the individual figures included in the main paper (figures starting with a number) and the in the supplementary material (figures starting with `S`). Figures which share greater parts of code and/or objects are combined within a single script.
+`create_fig2.tex` | [LaTeX](https://www.latex-project.org/) code to create figure 2 of the manuscript which can be run with any LaTeX compiler (not provided in this repository).
+`compute_explicit_numbers.R` | script that holds the computations for several statistics that are mentioned explicitly in the text of the main paper
+
+
+Directory | Description
+---- | ----------
+`cache` | directory used by some scripts to cache data. In the archive provided on [Zenodo](https://doi.org/10.5281/zenodo.5543879), this directory holds the pre-processed data
+`data_ACER` | directory for the ACER database 
+`data_in` | directory for raw input data like th output climate simulations
+`data_out` | directory for output data like null model draws, similarity measures, and network measures for immediate access
+`figures` | directory for plots
+
+Out of the box, these directories are part of the repository but their content is not under version control. If needed, users can move the folder content to a location that suits them and replace directories with symbolic links (see `ln -s --help` on UNIX systems).
+
+
+File | Description
+---- | ----------
+`.gitignore` | Information for GIT version control to not add several file extensions to version control (e.g. `*.png`, `*.pdf`, and the contents of `cache`)
+`LICENSE.md` | Licensing information
+`README.md` | General README
+
+
+## Obtaining published data
+
+In general, the data described below and in the manuscript has to be obtained to be able to run the full code stack.
+
+However, based on the pre-processed data provided in this repository (see [Caches](#caches)), figures can be reproduced without obtaining the original model data (see [Model simulations](#models)). Naturally, the code used for computing surrogate time series from model data, for emulator training on model data, and for predicting the response of tree- and shrub-fraction in models to different forcings is fully functional for use based on the original simulation data.
+
+To find out about the expected paths for data, check the [constants](#constants) and the individual scripts.
+
+### ACER pollen and charcoal database
+
+The ACER pollen and charcoal database is available on PANGAEA in plain CSV and in Microsoft ACCESS format (https://doi.pangaea.de/10.1594/PANGAEA.870867).
+Download the data in plain CSV format from https://doi.pangaea.de/10.1594/PANGAEA.870865.
+
+### NGRIP and EPICA Dome C oxygen isotopes
+
+We use corrected d18O data on the AICC2012 chronology which was compiled by Peter Köhler (peter.koehler@awi.de) and obtained by personal communication. 
+
+The dataset for NGRIP is based on data from the
+
+**NGRIP-Members**: *High-resolution record of Northern Hemisphere climate extending into the last interglacial period.* Nature, 2004, 431, 147-151
+
+(also see the data source: http://www.iceandclimate.nbi.ku.dk/data/2010-11-19_GICC05modelext_for_NGRIP.txt).
+
+The AICC2012 age models for NGRIP were computed by
+
+**Veres, D. et al.**: *The Antarctic ice core chronology (AICC2012): an optimized multi-parameter and multi-site dating approach for the last 120 thousand years.* Climate of the Past, 2013, 9, 1733-1748 .
+
+For EPICA Dome C, the dataset is based on data from 
+
+**Stenni, B. et al.**: *The deuterium excess records of EPICA Dome C and Dronning Maud Land ice cores (East Antarctica).* Quaternary Science Reviews, 29, 146 – 159, doi:10.1016/j.quascirev.2009.10.009, 2010.
+
+and the AICC2012 age models were computed by
+
+**Bazin, L. et al.**: *An optimized multi-proxy, multi-site Antarctic ice and gas orbital chronology (AICC2012): 120--800 ka.* Climate of the Past, 2013, 9, 1715-1731
+
+**Veres, D. et al.**: *The Antarctic ice core chronology (AICC2012): an optimized multi-parameter and multi-site dating approach for the last 120 thousand years.* Climate of the Past, 2013, 9, 1733-1748 .
+
+For both ice cores isotopic ratios were corrected using Eqn 1 in the SI of
+
+**Parrenin, F. et al.**: *Synchronous change in atmospheric CO$_2$ and Antarctic temperature during the last deglacial warming.* Science, 2013, 339, 1060 - 1063 .
+
+
+### CO2 data
+
+The CO2 data used for as forcing for the emulated tree and shrub fraction response and as an illustration in Figure 1 is from 
+
+**Köhler, P. et al.**: *A156 kyr smoothed history of the atmospheric greenhouse gases CO2, CH4, andN2O and their radiative forcing.* Earth System Science Data, 2017, 9, 363–387, doi:10.5194/essd-9-363-2017 .
+
+
+### ICE-5G ice sheet
+
+The ICE-5G reconstruction used for the background of Figure 1 is described in the main publication. 
+It is available for download from W. R. Peltier at https://www.atmosp.physics.utoronto.ca/~peltier/data.php in support of the corresponding publication:
+
+**Peltier, W. R.**: *Global glacial isostasy and the surface of the ice-age Earth1051-The ICE-5G(VM 2) model and GRACE.* Annual Review of Earth and Planetary Sciences, 2004, 32(1), 111–149. doi:10.1146/annurev.earth.32.082503.144359 .
+
+### Model Simulations {#models}
+
+Data from the three model simulations used in the study can be obtained from the following sources:
+
+- TraCE-21ka simulation: https://www.earthsystemgrid.org/project/trace.html (However, the data that we used within the study and for computing the pre-processed caches which come along with this code stack was obtained from https://www.earthsystemgrid.org/dataset/ucar.cgd.ccsm3.trace.html (last access: 12.02.2021).)
+- HadCM3 BRIDGE simulation: https://www.paleo.bristol.ac.uk/ummodel/scripts/html_bridge/bbc_all_triff_rev_dyn04.html
+- LOVECLIM simulation: http://apdrc.soest.hawaii.edu/las/v6/dataset?catitem=17844
+
+### Naturalearthdata
+
+Map plots require coastlines etc. from [naturalearthdata](https://www.naturalearthdata.com/downloads/110m-physical-vectors/). Meanwhile, there exists an R package `rnaturalearthdata` which can be used as well for direct data import. However, we have not adapted our code to this package yet. When the shapefiles are loaded for the first time in a session they are cached to the global environment which will take a moment.
+
+### ESRI Continents
+
+Continent files used for bubble matrices of the style of Figure 5A of the manuscript can be obtained from [ESRI](https://www.arcgis.com/home/item.html?id=a3cb207855b348a297ab85261743351d) and have to be converted into shapefiles for use in R. This can be done in any GIS program. Alternatively, bubble matrices can be plotted easily without the continents as styling elements.
+
+
+## Configuring of global constants {#constants}
+
+Check the file `constants.R` to set global constants. In particular, adapt paths to your machine and create the directories described in the table above. Symlinks created with the UNIX command `ln -s` can be used to link to data input, data output and plot output directories.
+
+Provide the path to the downloaded ACER database as `DIR_DATASETS`. To use the default path, the downloaded `ACER_pollen_charcoal_2017-02-15` folder has to be renamed to `ACER_pollen_charcoal_2017-02-15_flat` which is done to not mess up with the ACCESS format of the database if present. Although not finally used in the network analysis of our study, we advise users of the ACER database to correct the variable `count_type` of `site_id 53` (F2-92-P3) to `COUN` in the data file `sample.csv` as it incorrectly features as `PCNT` in the original database. For the default use of this code stack, provide the name `sample_ct_corrected.csv` to the corrected data file.
+
+If you obtain the original model data (see [models](#models)) check `main_simulation_data.R` for the expected default paths or adapt the paths in `constants.R` accordingly. Pre-processed data is also available in `cache` and can be used right away in the scripts (see [caches](#caches)).
+
+## Installing and loading package dependencies {#libraries}
+
+The scripts rely on these non-`base` R packages which have to be installed to run all of the code:
+
+- `tidyverse` (`dplyr`, `tibble`, `magrittr`, `ggplot2`, `tidyr`, `purrr`)
+- `tidygraph`
+- `ggraph`
+- `ggnewscale`
+- `cowplot`
+- `grid`
+- `zoo`
+- `netcdf4`
+- `nest` (can be obtained from `https://github.com/krehfeld/nest`)
+- `PaleoSpec` (can be obtained `https://github.com/EarthSystemDiagnostics/paleospec`)
+- `vegan`
+- `palinsol`
+- `mvnfast`
+- `mgcv`
+- `spam`
+- `hash`
+- `foreach`
+- `fields`
+- `viridisLite`
+- `sp`
+- `rgeos` 
+- `rgdal`
+- `sf`
+- `raster`
+- `maps`
+- `RColorBrewer`
+- `readxl`
+- `parallel`
+- `doParallel` (`foreach`, `parallel`, `iterators`)
+- `digest::digest`
+- `hash::hash`
+- `rioja`
+- `corrplot`
+
+**We acknowledge the [R Core team](https://www.R-project.org/) and all package developers of packages used in this study. We thank them for their time and dedication to provide R and the packages to the public. Please see `citation()` for details on the R Core Team and `citation("pkgname")` for details on the developers of individual packages.**
+
+
+# Computing, evaluating, and visualizing paleoclimate networks from pollen data and model simulations {#pcns}
+
+## Bit identical reproduction of the results, Pre-computed data product for immediate use {#bitid}
+
+Bit-identical reproduction of all results requires to use the *exact* draws from the spatio-temporal null model used in the study, which rely on a random number generator (see manuscript for details). The archived snapshot of this repository on [Zenodo](https://doi.org/10.5281/zenodo.5543879) contains the 1000-member ensemble of correlation sets that are computed for significance testing of similarity estimates and are based on the reference time series drawn from the null model. Because of the size of the sets of time series draws, the individual time series are, however, not archived on Zenodo. Individual access to the individual time series themselves can be arranged for upon request.
+
+The entire code for re-computing the null model is provided in this repo --- including the surrogate time series. Re-computing requires a substantial amount of computation (see [the CPU and storage requirements](#cpu)). Therefore, to allow fast access to the data and for running the plotting and network measurement code right away, we provide the results of the significance test of proxy and model data against the correlations obtained from these 1000 draws as well.
+
+As a less computationally costly test case from start to finish that includes creating the surrogate time series and computing the null model draws of the similarity measure, see the script `main_test_null_model.R`. This script draws only 4 sets of pseudo-proxies and computes null model similarity from them. Note that the results from this test case provide no quantitative value (see Gelman--Rubin criterion described in the supplementary information) and that their purpose is solely to present the code. The full set of all members of the null model correlations are available upon request to the authors.
+
+As per default, all scripts apart from `main_test_pcn.R` use as much of the pre-computed data (see [caches](#caches)) as available and on the most processed level that is available. This behavior can be changed by modifying the flags at the beginning of the respective scripts.
+
+
+## Guide for re-creating the figures from the manuscript and for re-tracing the function call tree
+
+Open the script `create_fig*.R` belonging to the figure of interest (see [the description of scripts](#file_descriptions))
+
+  - To re-trace an individual function use `Ctrl+Left mouse click` to jump to the definition and use the arrows at the top left of the scripting area to navigate in the call tree
+
+  - To run the analyses
+    1. Check if you need to adapt global paths (see [the description of `constants.R`](#file_description)) or the local paths in the script prior to executing the code
+    2. Make sure that your working directory (`getwd()`) is set to the top level folder of this code stack `pollen_pcn_v2`. Otherwise, use `setwd('path/to/pollen_cpn_v2')` to do so.
+    3. `source("init_all.R")` at the beginning of a session to source all function and class definitions, and to load all package dependencies.
+    4. Run the script consecutively in order to re-create the figures step-by-step. Note the comments within the individual scripts for details. All `create_fig*.R` scripts and many of the `main_*.R` scripts rely on the same set of data objects that have to be computed/loaded initially (e.g. the objects which store paleoclimate networks and network measures). Apart from very few of such "data cross-references" between `create_fig*.R` scripts, these script-on-script dependencies are made explicit with `source('main_[...].R')` statements. The few dependencies between `create_fig*.R` scripts are described in comments in the respective files.
+    5. The figures will be saved in the `./figures` directory per default
+    6. When closing the session in RStudio it is not advisable to save the workspace of the session to disk. The workspace can be large and would be loaded into the RAM at the next start-up of RStudio again. Instead, the caching options to disk provided within the scripts should be used to save intermediate data conveniently.
+
+## A note on network plots
+Note that for the network plots presented in our study, we do not use the `ggplot2` standard convention to map link colors (call to `aes()`). Instead, we effectively plot positive and negative links after one another. We take this approach to circumvent a widely-known problem of the `ggraph` function `geom_conn_bundle()`. To our knowledge this problem has been fixed in a recent release of `ggraph`. Readers who would like to reuse parts of the code stack could simplify this section of the code again, incorporating the fix by `ggraph` developers.
+
+## CPU and Storage requirements {#cpu}
+
+Note that re-computing the null model ensembles used to estimate the significance of site--by--site similarity of pollen records and model surrogates is computationally expensive. Depending on the system, this can take several hours up to days and will heavily use the available RAM memory. Output data is in the order of up to some tens of Gigabytes in size.
+
+# Pre-processed data caches {#caches}
+Pre-computed input data products for immediate use are part of the [Zenodo](https://zenodo.org) archive of the code stack (see [above](#intro)). If you obtained this code from [GitHub](https://github.com/paleovar/pollen_pcn_v2) and want to use the pre-processed data, please obtain the full archive from Zenodo. The caches are stored in `.RData` format, which allows to directly store R objects. When caches are enabled in the individual `main_*.R` scripts, the scripts will load the pre-processed objects for direct use.
