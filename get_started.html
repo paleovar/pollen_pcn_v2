@@ -1773,11 +1773,11 @@ $(document).ready(function () {
 </tr>
 <tr class="odd">
 <td><code>main_fit_emulators.R</code></td>
-<td>fitting of emulators (general adversarial models) for TraCE and HadCM3 simulations</td>
+<td>fitting of emulators (generalized additive models) for TraCE and HadCM3 simulations</td>
 </tr>
 <tr class="even">
 <td><code>main_pca.R</code></td>
-<td>principal component analysis of ACER AP pollen proxies and TraCE surrogates</td>
+<td>principal component analysis of ACER AP signals and TraCE surrogates</td>
 </tr>
 <tr class="odd">
 <td><code>main_pcn_meas.R</code></td>
@@ -1801,7 +1801,7 @@ $(document).ready(function () {
 </tr>
 <tr class="even">
 <td><code>create_fig[...].R</code></td>
-<td><a href="https://www.r-project.org/">R</a> scripts to create the individual figures included in the main paper (figures starting with a number) and the in the supplementary material (figures starting with <code>S</code>). Figures which share greater parts of code and/or objects are combined within a single script.</td>
+<td><a href="https://www.r-project.org/">R</a> scripts to create the individual figures included in the main paper (figures starting with a number) and in the supplementary material (figures starting with <code>S</code>). Figures which share greater parts of code and/or objects are combined within a single script.</td>
 </tr>
 <tr class="odd">
 <td><code>create_fig2.tex</code></td>
@@ -1835,7 +1835,7 @@ $(document).ready(function () {
 </tr>
 <tr class="odd">
 <td><code>data_in</code></td>
-<td>directory for raw input data like th output climate simulations</td>
+<td>directory for raw input data like the output from the climate simulations</td>
 </tr>
 <tr class="even">
 <td><code>data_out</code></td>
@@ -1886,7 +1886,7 @@ $(document).ready(function () {
 </div>
 <div id="ngrip-and-epica-dome-c-oxygen-isotopes" class="section level3">
 <h3>NGRIP and EPICA Dome C oxygen isotopes</h3>
-<p>We use corrected d18O data on the AICC2012 chronology which was compiled by Peter Köhler (<a href="mailto:peter.koehler@awi.de" class="email">peter.koehler@awi.de</a>) and obtained by personal communication.</p>
+<p>We use corrected d18O data on the AICC2012 chronology which was compiled by Peter Köhler and obtained by personal communication.</p>
 <p>The dataset for NGRIP is based on data from the</p>
 <p><strong>NGRIP-Members</strong>: <em>High-resolution record of Northern Hemisphere climate extending into the last interglacial period.</em> Nature, 2004, 431, 147-151</p>
 <p>(also see the data source: <a href="http://www.iceandclimate.nbi.ku.dk/data/2010-11-19_GICC05modelext_for_NGRIP.txt" class="uri">http://www.iceandclimate.nbi.ku.dk/data/2010-11-19_GICC05modelext_for_NGRIP.txt</a>).</p>
@@ -1979,7 +1979,7 @@ $(document).ready(function () {
 <h1>Computing, evaluating, and visualizing paleoclimate networks from pollen data and model simulations</h1>
 <div id="bitid" class="section level2">
 <h2>Bit identical reproduction of the results, Pre-computed data product for immediate use</h2>
-<p>Bit-identical reproduction of all results requires to use the <em>exact</em> draws from the spatio-temporal null model used in the study, which rely on a random number generator (see manuscript for details). The archived snapshot of this repository on <a href="https://doi.org/10.5281/zenodo.5543879">Zenodo</a> contains the 1000-member ensemble of correlation sets that are computed for significance testing of similarity estimates and are based on the reference time series drawn from the null model. Because of the size of the sets of time series draws, the individual time series are, however, not archived on Zenodo. Individual access to the individual time series themselves can be arranged for upon request.</p>
+<p>Bit-identical reproduction of all results requires to use the <em>exact</em> draws from the spatio-temporal null model used in the study, which rely on a random number generator (see manuscript for details). The archived snapshot of this repository on <a href="https://doi.org/10.5281/zenodo.5543879">Zenodo</a> contains the 1000-member ensemble of correlation sets that are computed for significance testing of similarity estimates and are based on the reference time series drawn from the null model. Because of the size of the sets of time series draws, the individual time series are, however, not archived on Zenodo. Individual access to the individual time series themselves can be arranged upon request.</p>
 <p>The entire code for re-computing the null model is provided in this repo — including the surrogate time series. Re-computing requires a substantial amount of computation (see <a href="#cpu">the CPU and storage requirements</a>). Therefore, to allow fast access to the data and for running the plotting and network measurement code right away, we provide the results of the significance test of proxy and model data against the correlations obtained from these 1000 draws as well.</p>
 <p>As a less computationally costly test case from start to finish that includes creating the surrogate time series and computing the null model draws of the similarity measure, see the script <code>main_test_null_model.R</code>. This script draws only 4 sets of pseudo-proxies and computes null model similarity from them. Note that the results from this test case provide no quantitative value (see Gelman–Rubin criterion described in the supplementary information) and that their purpose is solely to present the code. The full set of all members of the null model correlations are available upon request to the authors.</p>
 <p>As per default, all scripts apart from <code>main_test_pcn.R</code> use as much of the pre-computed data (see <a href="#caches">caches</a>) as available and on the most processed level that is available. This behavior can be changed by modifying the flags at the beginning of the respective scripts.</p>

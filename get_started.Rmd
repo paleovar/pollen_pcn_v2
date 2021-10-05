@@ -6,13 +6,13 @@ author:
 - Kira Rehfeld - kira.rehfeld@uni-tuebingen.de
 date: '*Last update: October, 04 2021*'
 output:
-  html_notebook:
-    toc: yes
-    toc_depth: 2
   html_document:
     toc: yes
     toc_depth: '2'
     df_print: paged
+  html_notebook:
+    toc: yes
+    toc_depth: 2
 ---
 
 ```{r setup, include=FALSE}
@@ -57,14 +57,14 @@ Script | Description
 `main_emulation_pcn_meas.R` | computation of network measures of the networks based on emulated model responses
 `main_emulation_pcns.R` | computation of similarity measures to construct networks based on emulated model responses
 `main_explained_variance.R` | explained variance of the ACER AP signal for the multivariate pollen records
-`main_fit_emulators.R` | fitting of emulators (general adversarial models) for TraCE and HadCM3 simulations
-`main_pca.R` | principal component analysis of ACER AP pollen proxies and TraCE surrogates
+`main_fit_emulators.R` | fitting of emulators (generalized additive models) for TraCE and HadCM3 simulations
+`main_pca.R` | principal component analysis of ACER AP signals and TraCE surrogates
 `main_pcn_meas.R` | computation of network measures of the networks based on ACER AP signals and model surrogates
 `main_pcn_sensitivity.R` | sensitivity tests of network measures to record properties and transformation
 `main_pcns.R` | computation of similarity measures to construct networks based on ACER AP signals and model surrogates
 `main_simulation_data.R` | initialize the pseudo proxies from model data
 `main_test_pcn.R` | test case for code used to compute null models and networks (see the section on [bit identical reproduction](#bitid))
-`create_fig[...].R` | [R](https://www.r-project.org/) scripts to create the individual figures included in the main paper (figures starting with a number) and the in the supplementary material (figures starting with `S`). Figures which share greater parts of code and/or objects are combined within a single script.
+`create_fig[...].R` | [R](https://www.r-project.org/) scripts to create the individual figures included in the main paper (figures starting with a number) and in the supplementary material (figures starting with `S`). Figures which share greater parts of code and/or objects are combined within a single script.
 `create_fig2.tex` | [LaTeX](https://www.latex-project.org/) code to create figure 2 of the manuscript which can be run with any LaTeX compiler (not provided in this repository).
 `compute_explicit_numbers.R` | script that holds the computations for several statistics that are mentioned explicitly in the text of the main paper
 
@@ -73,7 +73,7 @@ Directory | Description
 ---- | ----------
 `cache` | directory used by some scripts to cache data. In the archive provided on [Zenodo](https://doi.org/10.5281/zenodo.5543879), this directory holds the pre-processed data
 `data_ACER` | directory for the ACER database 
-`data_in` | directory for raw input data like th output climate simulations
+`data_in` | directory for raw input data like the output from the climate simulations
 `data_out` | directory for output data like null model draws, similarity measures, and network measures for immediate access
 `figures` | directory for plots
 
@@ -102,7 +102,7 @@ Download the data in plain CSV format from https://doi.pangaea.de/10.1594/PANGAE
 
 ### NGRIP and EPICA Dome C oxygen isotopes
 
-We use corrected d18O data on the AICC2012 chronology which was compiled by Peter Köhler (peter.koehler@awi.de) and obtained by personal communication. 
+We use corrected d18O data on the AICC2012 chronology which was compiled by Peter Köhler and obtained by personal communication. 
 
 The dataset for NGRIP is based on data from the
 
@@ -213,7 +213,7 @@ The scripts rely on these non-`base` R packages which have to be installed to ru
 
 ## Bit identical reproduction of the results, Pre-computed data product for immediate use {#bitid}
 
-Bit-identical reproduction of all results requires to use the *exact* draws from the spatio-temporal null model used in the study, which rely on a random number generator (see manuscript for details). The archived snapshot of this repository on [Zenodo](https://doi.org/10.5281/zenodo.5543879) contains the 1000-member ensemble of correlation sets that are computed for significance testing of similarity estimates and are based on the reference time series drawn from the null model. Because of the size of the sets of time series draws, the individual time series are, however, not archived on Zenodo. Individual access to the individual time series themselves can be arranged for upon request.
+Bit-identical reproduction of all results requires to use the *exact* draws from the spatio-temporal null model used in the study, which rely on a random number generator (see manuscript for details). The archived snapshot of this repository on [Zenodo](https://doi.org/10.5281/zenodo.5543879) contains the 1000-member ensemble of correlation sets that are computed for significance testing of similarity estimates and are based on the reference time series drawn from the null model. Because of the size of the sets of time series draws, the individual time series are, however, not archived on Zenodo. Individual access to the individual time series themselves can be arranged upon request.
 
 The entire code for re-computing the null model is provided in this repo --- including the surrogate time series. Re-computing requires a substantial amount of computation (see [the CPU and storage requirements](#cpu)). Therefore, to allow fast access to the data and for running the plotting and network measurement code right away, we provide the results of the significance test of proxy and model data against the correlations obtained from these 1000 draws as well.
 
