@@ -179,9 +179,9 @@ The scripts rely on these non-`base` R packages which have to be installed to ru
 - `cowplot`
 - `grid`
 - `zoo`
-- `netcdf4`
-- `nest` (can be obtained from `https://github.com/krehfeld/nest`)
-- `PaleoSpec` (can be obtained `https://github.com/EarthSystemDiagnostics/paleospec`)
+- `ncdf4`
+- `nest` (can be obtained from `https://github.com/krehfeld/nest`, see below for instructions)
+- `PaleoSpec` (can be obtained `https://github.com/EarthSystemDiagnostics/paleospec`, see below for instructions)
 - `vegan`
 - `palinsol`
 - `mvnfast`
@@ -207,6 +207,21 @@ The scripts rely on these non-`base` R packages which have to be installed to ru
 - `corrplot`
 
 **We acknowledge the [R Core team](https://www.R-project.org/) and all package developers of packages used in this study. We thank them for their time and dedication to provide R and the packages to the public. Please see `citation()` for details on the R Core Team and `citation("pkgname")` for details on the developers of individual packages.**
+
+### Installing dependencies from GitHub
+
+The `nest` and `PaleoSpec` packages can be obtained from GitHub instead of CRAN as follows.
+
+```{r, eval=FALSE}
+# install the devtools library if needed
+install.packages("devtools")
+
+# install `PaleoSpec` from GitHub
+devtools::install_github("https://github.com/EarthSystemDiagnostics/paleospec")
+
+# install `nest` from GitHub
+devtools::install_github("https://github.com/krehfeld/nest")
+```
 
 
 # Computing, evaluating, and visualizing paleoclimate networks from pollen data and model simulations {#pcns}

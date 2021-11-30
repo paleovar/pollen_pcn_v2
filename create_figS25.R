@@ -4,6 +4,7 @@
 #DONE & TESTED
 
 ## initialize data (skips automatically if done previously in the session, see `main_emulation_pcns.R`, `main_emulation_pcn_meas.R`) ----
+source('main_pcns.R')
 source('main_emulation_pcns.R')
 source('main_emulation_pcn_meas.R')
 

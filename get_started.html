@@ -1945,9 +1945,9 @@ $(document).ready(function () {
 <li><code>cowplot</code></li>
 <li><code>grid</code></li>
 <li><code>zoo</code></li>
-<li><code>netcdf4</code></li>
-<li><code>nest</code> (can be obtained from <code>https://github.com/krehfeld/nest</code>)</li>
-<li><code>PaleoSpec</code> (can be obtained <code>https://github.com/EarthSystemDiagnostics/paleospec</code>)</li>
+<li><code>ncdf4</code></li>
+<li><code>nest</code> (can be obtained from <code>https://github.com/krehfeld/nest</code>, see below for instructions)</li>
+<li><code>PaleoSpec</code> (can be obtained <code>https://github.com/EarthSystemDiagnostics/paleospec</code>, see below for instructions)</li>
 <li><code>vegan</code></li>
 <li><code>palinsol</code></li>
 <li><code>mvnfast</code></li>
@@ -1973,6 +1973,18 @@ $(document).ready(function () {
 <li><code>corrplot</code></li>
 </ul>
 <p><strong>We acknowledge the <a href="https://www.R-project.org/">R Core team</a> and all package developers of packages used in this study. We thank them for their time and dedication to provide R and the packages to the public. Please see <code>citation()</code> for details on the R Core Team and <code>citation(&quot;pkgname&quot;)</code> for details on the developers of individual packages.</strong></p>
+<div id="installing-dependencies-from-github" class="section level3">
+<h3>Installing dependencies from GitHub</h3>
+<p>The <code>nest</code> and <code>PaleoSpec</code> packages can be obtained from GitHub instead of CRAN as follows.</p>
+<pre class="r"><code># install the devtools library if needed
+install.packages(&quot;devtools&quot;)
+
+# install `PaleoSpec` from GitHub
+devtools::install_github(&quot;https://github.com/EarthSystemDiagnostics/paleospec&quot;)
+
+# install `nest` from GitHub
+devtools::install_github(&quot;https://github.com/krehfeld/nest&quot;)</code></pre>
+</div>
 </div>
 </div>
 <div id="pcns" class="section level1">
